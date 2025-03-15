@@ -5,7 +5,7 @@ namespace WebAPI.Dtos;
 public sealed class ErrorResponseDto
 {
     [JsonPropertyName("error")]
-    public string Field { get; set; } = default!;
-    [JsonPropertyName("errorMessage")]
-    public string ErrorMessage{ get; set; } = default!;
+    public string Error { get; set; } = default!;
+    [JsonPropertyName("error_description")]
+    public string ErrorDescription { get; set; } = default!;
 }
