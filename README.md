@@ -14,7 +14,7 @@ This will start Keycloak in development mode and expose it on port **8080**.
 
 ## 📑 Documentation
 For API testing and reference, check out the following documentation:
-- [📄 Postman Document](https://documenter.getpostman.com/view/42215598/2sAYkBs1jY#637289c4-8776-470d-8be9-38421e9556c4)
+- [📄 Postman Documentation](https://documenter.getpostman.com/view/42215598/2sAYkBs1jY#637289c4-8776-470d-8be9-38421e9556c4)
 - [📘 Keycloak REST API Documentation](https://www.keycloak.org/docs-api/latest/rest-api/index.html)
 
 ## 📚 Resources
