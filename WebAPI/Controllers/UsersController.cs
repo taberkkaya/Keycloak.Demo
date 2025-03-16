@@ -9,13 +9,14 @@ namespace WebAPI.Controllers;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
-//[Authorize]
+[Authorize]
 public sealed class UsersController(
     KeycloakService keycloakService,
     IOptions<KeycloakConfiguration> options) : ControllerBase
 {
 
     [HttpGet]
+    [Authorize("User_GetAll")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         string endpoint = $"{options.Value.Hostname}/admin/realms/{options.Value.Realm}/users";
@@ -27,6 +28,7 @@ public sealed class UsersController(
     }
 
     [HttpGet]
+    [Authorize("User_GetAll")]
     public async Task<IActionResult> GetByEmail(string email, CancellationToken cancellationToken)
     {
         string endpoint = $"{options.Value.Hostname}/admin/realms/{options.Value.Realm}/users?email={email}";
@@ -38,6 +40,7 @@ public sealed class UsersController(
     }
 
     [HttpGet]
+    [Authorize("User_GetAll")]
     public async Task<IActionResult> GetByUserName(string userName, CancellationToken cancellationToken)
     {
         string endpoint = $"{options.Value.Hostname}/admin/realms/{options.Value.Realm}/users?username={userName}";
@@ -49,6 +52,7 @@ public sealed class UsersController(
     }
 
     [HttpGet]
+    [Authorize("User_GetAll")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
         string endpoint = $"{options.Value.Hostname}/admin/realms/{options.Value.Realm}/users/{id}";
@@ -60,6 +64,7 @@ public sealed class UsersController(
     }
 
     [HttpPut]
+    [Authorize("User_Update")]
     public async Task<IActionResult> Update(Guid id, UpdateUserDto request, CancellationToken cancellationToken = default)
     {
         string endpoint = $"{options.Value.Hostname}/admin/realms/{options.Value.Realm}/users/{id}";
@@ -73,6 +78,7 @@ public sealed class UsersController(
     }
 
     [HttpDelete]
+    [Authorize("User_Delete")]
     public async Task<IActionResult> DeleteById(Guid id, CancellationToken cancellationToken = default)
     {
         string endpoint = $"{options.Value.Hostname}/admin/realms/{options.Value.Realm}/users/{id}";

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using WebAPI.Dtos;
 using WebAPI.Options;
@@ -8,7 +9,7 @@ namespace WebAPI.Controllers;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
-//[Authorize]
+[Authorize]
 public class RolesController(
     KeycloakService keycloakService,
     IOptions<KeycloakConfiguration> options
