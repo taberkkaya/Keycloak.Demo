@@ -27,7 +27,7 @@ public sealed class KeycloakService(
         data.Add(clientId);
         data.Add(clientSecret);
 
-        Result<GetAccessTokenReponseDto> result = 
+        Result<GetAccessTokenReponseDto> result =
             await PostUrlEncodedFormAsync<GetAccessTokenReponseDto>(endpoint, data, false, cancellationToken);
 
         return result.Data!.AccessToken;
@@ -52,8 +52,14 @@ public sealed class KeycloakService(
 
         if (!message.IsSuccessStatusCode)
         {
-            var errorResultForBadRequest = JsonSerializer.Deserialize<BadRequestErrorResponseDto>(response);
-            return Result<T>.Failure(errorResultForBadRequest!.ErrorMessage);
+            if (message.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var errorResultForBadRequest = JsonSerializer.Deserialize<BadRequestErrorResponseDto>(response);
+                return Result<T>.Failure(errorResultForBadRequest!.ErrorDescription);
+            }
+
+            var errorResultForOther = JsonSerializer.Deserialize<ErrorResponseDto>(response);
+            return Result<T>.Failure(errorResultForOther!.ErrorMessage);
         }
 
         if (message.StatusCode == HttpStatusCode.Created || message.StatusCode == HttpStatusCode.NoContent)
@@ -63,8 +69,8 @@ public sealed class KeycloakService(
 
         return Result<T>.Succeed(obj!);
     }
-    
-    public async Task<Result<T>> PostUrlEncodedFormAsync<T>(string endpoint, List<KeyValuePair<string,string>> data, bool requiredToken = false, CancellationToken cancellationToken = default)
+
+    public async Task<Result<T>> PostUrlEncodedFormAsync<T>(string endpoint, List<KeyValuePair<string, string>> data, bool requiredToken = false, CancellationToken cancellationToken = default)
     {
         HttpClient httpClient = new();
 
@@ -80,8 +86,84 @@ public sealed class KeycloakService(
 
         if (!message.IsSuccessStatusCode)
         {
-            var errorResultForBadRequest = JsonSerializer.Deserialize<BadRequestErrorResponseDto>(response);
-            return Result<T>.Failure(errorResultForBadRequest!.ErrorMessage);
+            if (message.StatusCode == HttpStatusCode.BadRequest || message.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                var errorResultForBadRequest = JsonSerializer.Deserialize<BadRequestErrorResponseDto>(response);
+                return Result<T>.Failure(errorResultForBadRequest!.ErrorDescription);
+            }
+            var errorResultForOther = JsonSerializer.Deserialize<ErrorResponseDto>(response);
+            return Result<T>.Failure(errorResultForOther!.ErrorMessage);
+        }
+
+        if (message.StatusCode == HttpStatusCode.Created || message.StatusCode == HttpStatusCode.NoContent)
+            return Result<T>.Succeed(default!);
+
+        var obj = JsonSerializer.Deserialize<T>(response);
+
+        return Result<T>.Succeed(obj!);
+    }
+
+    public async Task<Result<T>> GetAsync<T>(string endpoint, bool requiredToken = false, CancellationToken cancellationToken = default)
+    {
+        HttpClient httpClient = new();
+
+        if (requiredToken)
+        {
+            string token = await GetAccessToken();
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+        }
+
+        var message = await httpClient.GetAsync(endpoint, cancellationToken);
+
+        var response = await message.Content.ReadAsStringAsync();
+
+        if (!message.IsSuccessStatusCode)
+        {
+            if (message.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var errorResultForBadRequest = JsonSerializer.Deserialize<BadRequestErrorResponseDto>(response);
+                return Result<T>.Failure(errorResultForBadRequest!.ErrorDescription);
+            }
+
+            var errorResultForOther = JsonSerializer.Deserialize<ErrorResponseDto>(response);
+            return Result<T>.Failure(errorResultForOther!.ErrorMessage);
+        }
+
+        if (message.StatusCode == HttpStatusCode.Created || message.StatusCode == HttpStatusCode.NoContent)
+            return Result<T>.Succeed(default!);
+
+        var obj = JsonSerializer.Deserialize<T>(response);
+
+        return Result<T>.Succeed(obj!);
+    }
+
+    public async Task<Result<T>> PutAsync<T>(string endpoint, object data, bool requiredToken = false, CancellationToken cancellationToken = default)
+    {
+        var stringData = JsonSerializer.Serialize(data);
+        var content = new StringContent(stringData, Encoding.UTF8, "application/json");
+
+        HttpClient httpClient = new();
+
+        if (requiredToken)
+        {
+            string token = await GetAccessToken();
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+        }
+
+        var message = await httpClient.PutAsync(endpoint, content, cancellationToken);
+
+        var response = await message.Content.ReadAsStringAsync();
+
+        if (!message.IsSuccessStatusCode)
+        {
+            if (message.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var errorResultForBadRequest = JsonSerializer.Deserialize<BadRequestErrorResponseDto>(response);
+                return Result<T>.Failure(errorResultForBadRequest!.ErrorDescription);
+            }
+
+            var errorResultForOther = JsonSerializer.Deserialize<ErrorResponseDto>(response);
+            return Result<T>.Failure(errorResultForOther!.ErrorMessage);
         }
 
         if (message.StatusCode == HttpStatusCode.Created || message.StatusCode == HttpStatusCode.NoContent)
