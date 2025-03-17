@@ -20,7 +20,8 @@ This will start Keycloak in development mode and expose it on port **8080**.
 
 Access the Keycloak Admin Console at: [http://localhost:8080/admin](http://localhost:8080/admin)
 
-## 📸 
+## 📸
+
 ![image](https://github.com/user-attachments/assets/ef65a792-1a85-4598-b1fc-e146bf4d989f)
 ![image](https://github.com/user-attachments/assets/06aaf451-008b-4b8e-8929-e8c326bc14ca)
 
