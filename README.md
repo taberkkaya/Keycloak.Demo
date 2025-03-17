@@ -24,6 +24,7 @@ Access the Keycloak Admin Console at: [http://localhost:8080/admin](http://local
 
 ![image](https://github.com/user-attachments/assets/ef65a792-1a85-4598-b1fc-e146bf4d989f)
 ![image](https://github.com/user-attachments/assets/06aaf451-008b-4b8e-8929-e8c326bc14ca)
+![image](https://github.com/user-attachments/assets/1520fb12-2d2a-4041-8af1-8a8e89d14af6)
 
 ## 📑 Documentation
 
