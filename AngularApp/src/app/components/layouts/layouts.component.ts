@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
 
 @Component({
   selector: 'app-layouts',
@@ -8,4 +13,11 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   templateUrl: './layouts.component.html',
   styleUrl: './layouts.component.css',
 })
-export class LayoutsComponent {}
+export class LayoutsComponent {
+  constructor(private router: Router) {}
+
+  logout() {
+    localStorage.removeItem('accessToken');
+    this.router.navigateByUrl('/login');
+  }
+}
